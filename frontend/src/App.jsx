@@ -1,20 +1,42 @@
-import { useRef, useState } from 'react'
+import { useRef, useState,useEffect } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
-
+const[task,setTask]=useState('')
+const[todos,setTodos]=useState([])
 const handleInputChange=(e)=>{
   setTask(e.target.value)
 }
-const handleSubmit=(e)=>{
-  e.preventdefault();
+const handleSubmit=async(e)=>{
+  e.preventDefault();
   if(task.trim()){
-      setTodos([...todos,task])
-      setTask('')
+    const res=await fetch("http://localhost:3000/api/addtodo",
+    {
+     method:"POST",
+     headers:{"Content-Type":"Application/json"},
+     body:JSON.stringify({task})
+    })
+    const data=await res.json()
+    res.status==201?alert(data.msg):alert(data.msg)
+    getTodo()
   }
+
 }
+const getTodo=async()=>{
+  const res=await fetch("http://localhost:3000/api/gettodos")
+  console.log(res);
+  const data=await res.json();
+  setTodos([...data])
+  
+}
+useEffect(()=>{
+getTodo()
+setTask("")
+},[])
+console.log(todos);
+
 
   return (
     <>
@@ -25,9 +47,9 @@ const handleSubmit=(e)=>{
         <button type='submit'>Add Task</button>
       </form>
       <ul>
-        {todos.map((todo,index)=>{
+        {todos.map((todos,index)=>{
           <li key={index}>
-            {todo}
+            {todos}
           </li>
         })}
       </ul>

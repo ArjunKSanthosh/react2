@@ -16,7 +16,7 @@ export async function addTodo(req,res){
 export async function getTodos(req,res) {
     try {
         const todos=await todoSchema.find();
-        return res.status(200).send({todos})
+        return res.status(200).send(todos)
         
     } catch (error) {
         res.status(404).send({msg:error})
